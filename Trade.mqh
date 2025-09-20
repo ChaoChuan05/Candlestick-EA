@@ -10,6 +10,9 @@ class TradeCompute {
 private:
    CTrade trade;
 
+   TradeStrategy M15strategy;
+   TradeStrategy H1strategy;
+
    string symbol_pair;
    ENUM_TIMEFRAMES timeframe;
    double lot_size;
@@ -18,11 +21,14 @@ private:
    datetime last_exit_time;
    datetime current_time_bar;
 
+   //reference timeframe
+   ENUM_TIMEFRAMES timeframe_refer;
+
 public:
 
-   TradeCompute(double, string, ENUM_TIMEFRAMES);
+   TradeCompute(double, string, ENUM_TIMEFRAMES, ENUM_TIMEFRAMES);
 
-   void trade_execution(TradeStrategy &, Data &);
+   void trade_execution(Data &);
 };
 
 #endif

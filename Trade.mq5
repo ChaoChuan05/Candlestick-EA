@@ -1,9 +1,11 @@
 #include "Trade.mqh"
+#include "Strategy.mq5"
 
-TradeCompute::TradeCompute(double lot_volume, string trade_symbol, ENUM_TIMEFRAMES trade_timeframe) {
+TradeCompute::TradeCompute(double lot_volume, string trade_symbol, ENUM_TIMEFRAMES trade_timeframe, ENUM_TIMEFRAMES time_refer) : M15strategy(trade_symbol, trade_timeframe), H1strategy(trade_symbol, time_refer) {
    lot_size = lot_volume;
    symbol_pair = trade_symbol;
    timeframe = trade_timeframe;
+   timeframe_refer = time_refer;
 
    last_exit_time = 0;
    last_trade_time = 0;
@@ -11,7 +13,7 @@ TradeCompute::TradeCompute(double lot_volume, string trade_symbol, ENUM_TIMEFRAM
 
 }
 
-void TradeCompute::trade_execution(TradeStrategy &strategy, Data &data) {
+void TradeCompute::trade_execution(Data &data) {
 
    data.refresh_price();
 
@@ -27,22 +29,23 @@ void TradeCompute::trade_execution(TradeStrategy &strategy, Data &data) {
    double sell_tp = data.sell_profit();
    double sell_sl = data.sell_loss();
 
-   string trade_signal = strategy.trade_signal(data);
+   string M15trade_signal = M15strategy.trade_signal(data);
+   string H1trade_signal = H1strategy.trade_signal(data);
 
-   if(trade_signal == "BUY SIGNAL") {
+   if(M15trade_signal == "BUY SIGNAL" && H1trade_signal == "BUY SIGNAL") {
       trade.Buy(lot_size, symbol_pair, 0, buy_sl, buy_tp);
       Print("Buy ", lot_size, " on ", symbol_pair, " success!");
       last_trade_time = current_time_bar;
    }
    
-   else if(trade_signal == "SELL SIGNAL") {
+   else if(M15trade_signal == "SELL SIGNAL" && H1trade_signal == "SELL SIGNAL") {
       trade.Sell(lot_size, symbol_pair, 0, sell_sl, sell_tp);
       Print("Sell ", lot_size, " on ", symbol_pair, " success!");
       last_trade_time = current_time_bar;
    }
 
    else {
-      Print("No trade signal, ", trade_signal);
+      Print("No trade signal");
       
    }
    
