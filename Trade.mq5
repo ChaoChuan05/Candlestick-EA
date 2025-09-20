@@ -27,7 +27,7 @@ void TradeCompute::trade_execution(TradeStrategy &strategy, Data &data) {
    double sell_tp = data.sell_profit();
    double sell_sl = data.sell_loss();
 
-   string trade_signal = strategy.trade_signal();
+   string trade_signal = strategy.trade_signal(data);
 
    if(trade_signal == "BUY SIGNAL") {
       trade.Buy(lot_size, symbol_pair, 0, buy_sl, buy_tp);
