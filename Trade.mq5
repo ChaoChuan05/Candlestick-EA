@@ -16,6 +16,7 @@ TradeCompute::TradeCompute(double lot_volume, string trade_symbol, ENUM_TIMEFRAM
 void TradeCompute::trade_execution(Data &data) {
 
    data.refresh_price();
+   data.refresh_support_and_resistance(50);
 
    current_time_bar = iTime(symbol_pair, timeframe, 0);
 
